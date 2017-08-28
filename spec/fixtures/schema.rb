@@ -4,7 +4,7 @@ PostType = GraphQL::ObjectType.define do
   name "Post"
   field :id, !types.ID
   field :title, !types.String
-  field :description, !types.String, resolve: ->(_obj, _args, _ctx) { raise 'Can not parse the description' }
+  field :description, !types.String, resolve: ->(_obj, _args, _ctx) { raise Post::Oops.new('Can not parse the description') }
   field :category, !types.String, resolve: ->(_obj, _args, _ctx) { raise Post::Invalid.new('Post is invalid') }
 end
 
@@ -23,14 +23,14 @@ end
 
 Schema = GraphQL::Schema.define do
   query QueryType
+end
 
-  use GraphQL::Errors.configuration do
-    rescue_from Post::NotFound, Post::Invalid do |exception|
-      GraphQL::ExecutionError.new('Post is invalid')
-    end
+GraphQL::Errors.configure(Schema) do
+  rescue_from Post::NotFound, Post::Invalid do |exception|
+    GraphQL::ExecutionError.new('Post is invalid')
+  end
 
-    rescue_from StandardError do |exception|
-      GraphQL::ExecutionError.new('Something went wrong. Try again later')
-    end
+  rescue_from StandardError do |exception|
+    GraphQL::ExecutionError.new('Something went wrong. Try again later')
   end
 end

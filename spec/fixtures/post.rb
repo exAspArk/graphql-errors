@@ -3,6 +3,7 @@
 class Post
   NotFound = Class.new(StandardError)
   Invalid = Class.new(StandardError)
+  Oops = Class.new(StandardError)
 
   def self.where(user_id:)
     [new(user_id: user_id)]
