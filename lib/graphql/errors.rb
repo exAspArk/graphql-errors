@@ -25,7 +25,7 @@ module GraphQL
       schema_definition.instrument(:field, self)
     end
 
-    def instrument(type, field)
+    def instrument(_type, field)
       old_resolve_proc = field.resolve_proc
       new_resolve_proc = ->(object, arguments, context) do
         begin

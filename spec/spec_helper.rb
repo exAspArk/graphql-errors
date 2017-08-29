@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
+
+if ENV['COVERALLS_REPO_TOKEN']
+  require 'coveralls'
+  Coveralls.wear!
+end
+
 require "graphql/errors"
 
 require 'fixtures/post'

@@ -1,10 +1,18 @@
-# Graphql::Errors
+# graphql-errors
 
 [![Build Status](https://travis-ci.org/exAspArk/graphql-errors.svg?branch=master)](https://travis-ci.org/exAspArk/graphql-errors)
+[![Coverage Status](https://coveralls.io/repos/github/exAspArk/graphql-errors/badge.svg)](https://coveralls.io/github/exAspArk/graphql-errors)
+[![Code Climate](https://img.shields.io/codeclimate/github/exAspArk/graphql-errors.svg)](https://codeclimate.com/github/exAspArk/graphql-errors)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/graphql/errors`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem provides a simple error handling for [graphql-ruby](https://github.com/rmosolgo/graphql-ruby).
 
-TODO: Delete this and the text above, and describe your gem
+<a href="https://www.universe.com/" target="_blank" rel="noopener noreferrer">
+  <img src="images/universe.png" height="41" width="153" alt="Sponsored by Universe" style="max-width:100%;">
+</a>
+
+## Usage
+
+TODO: Write usage instructions here
 
 ## Installation
 
@@ -21,10 +29,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install graphql-errors
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 
