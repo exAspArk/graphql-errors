@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/exAspArk/graphql-errors.svg?branch=master)](https://travis-ci.org/exAspArk/graphql-errors)
 [![Coverage Status](https://coveralls.io/repos/github/exAspArk/graphql-errors/badge.svg?branch=master)](https://coveralls.io/github/exAspArk/graphql-errors?branch=master)
 [![Code Climate](https://img.shields.io/codeclimate/github/exAspArk/graphql-errors.svg)](https://codeclimate.com/github/exAspArk/graphql-errors)
+[![Downloads](https://img.shields.io/gem/dt/graphql-errors.svg)](https://rubygems.org/gems/graphql-errors)
+[![Latest Version](https://img.shields.io/gem/v/graphql-errors.svg)](https://rubygems.org/gems/graphql-errors)
 
 This gem provides a simple error handling for [graphql-ruby](https://github.com/rmosolgo/graphql-ruby).
 
@@ -34,7 +36,7 @@ GraphQL::Errors.configure(Schema) do
 
   rescue_from StandardError do |exception|
     Notify.about(exception)
-    raise exception
+    GraphQL::ExecutionError.new("Please try to execute the query for this field later")
   end
 end
 ```
