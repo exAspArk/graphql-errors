@@ -21,10 +21,6 @@ module GraphQL
       self.instance_eval(&block)
     end
 
-    def use(schema_definition)
-      schema_definition.instrument(:field, self)
-    end
-
     def instrument(_type, field)
       old_resolve_proc = field.resolve_proc
       new_resolve_proc = ->(object, arguments, context) do
@@ -57,6 +53,8 @@ module GraphQL
       @handler_by_class.each do |klass, handler|
         return handler if exception.is_a?(klass)
       end
+
+      nil
     end
   end
 end

@@ -34,7 +34,7 @@ RSpec.describe GraphQL::Errors do
       expect(result).to eq("data" => {"posts" => [{"id" => "1", "title" => "Post Title"}]})
     end
 
-    it 'rescues the first error in the list' do
+    it 'rescues the first Post::NotFound error in the list' do
       query = "query($id: ID!) { post(id: $id) { id title } }"
 
       result = Schema.execute(query, variables: {'id' => 1})
@@ -49,7 +49,7 @@ RSpec.describe GraphQL::Errors do
       )
     end
 
-    it 'rescues the second error in the list' do
+    it 'rescues the second Post::Invalid error in the list' do
       query = "query($user_id: ID!) { posts(user_id: $user_id) { id category } }"
 
       result = Schema.execute(query, variables: {'user_id' => 1})
@@ -64,7 +64,7 @@ RSpec.describe GraphQL::Errors do
       )
     end
 
-    it 'rescues the standard error' do
+    it 'handles the inherited Post::WorksOnMyMachine error by rescuing Post::Oops' do
       query = "query($user_id: ID!) { posts(user_id: $user_id) { id description } }"
 
       result = Schema.execute(query, variables: {'user_id' => 1})
@@ -77,6 +77,14 @@ RSpec.describe GraphQL::Errors do
           "path" => ["posts", 0, "description"]
         ]
       )
+    end
+
+    it 'raises the error if there is no handler' do
+      query = "query($user_id: ID!) { posts(user_id: $user_id) { id language } }"
+
+      expect {
+        Schema.execute(query, variables: {'user_id' => 1})
+      }.to raise_error(RuntimeError, 'Request failed')
     end
   end
 end
