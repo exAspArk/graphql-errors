@@ -1,7 +1,7 @@
 # graphql-errors
 
 [![Build Status](https://travis-ci.org/exAspArk/graphql-errors.svg?branch=master)](https://travis-ci.org/exAspArk/graphql-errors)
-[![Coverage Status](https://coveralls.io/repos/github/exAspArk/graphql-errors/badge.svg)](https://coveralls.io/github/exAspArk/graphql-errors)
+[![Coverage Status](https://coveralls.io/repos/github/exAspArk/graphql-errors/badge.svg?branch=master)](https://coveralls.io/github/exAspArk/graphql-errors?branch=master)
 [![Code Climate](https://img.shields.io/codeclimate/github/exAspArk/graphql-errors.svg)](https://codeclimate.com/github/exAspArk/graphql-errors)
 
 This gem provides a simple error handling for [graphql-ruby](https://github.com/rmosolgo/graphql-ruby).
@@ -12,7 +12,48 @@ This gem provides a simple error handling for [graphql-ruby](https://github.com/
 
 ## Usage
 
-TODO: Write usage instructions here
+Once you defined your GraphQL schema:
+
+```ruby
+Schema = GraphQL::Schema.define do
+  query QueryType
+end
+```
+
+You can add error handlers with `GraphQL::Errors`. For example:
+
+```ruby
+GraphQL::Errors.configure(Schema) do
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    nil
+  end
+
+  rescue_from ActiveRecord::RecordInvalid do |exception|
+    GraphQL::ExecutionError.new(exception.record.errors.full_messages.join("\n"))
+  end
+
+  rescue_from StandardError do |exception|
+    Notify.about(exception)
+    raise exception
+  end
+end
+```
+
+It'll handle exceptions raised from each resolver in the schema:
+
+```ruby
+QueryType = GraphQL::ObjectType.define do
+  name "Query"
+
+  field :post, PostType do
+    argument :id, !types.ID
+    resolve ->(obj, args, ctx) { Post.find(args['id']) } # <= will raise ActiveRecord::RecordNotFound
+  end
+end
+
+Schema.execute('query { post(id: "1") { title } }') # handles the error without failing the whole query
+# => { data: { post: nil } }
+```
 
 ## Installation
 
