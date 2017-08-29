@@ -5,7 +5,13 @@ require "graphql/errors/version"
 
 module GraphQL
   class Errors
+    EmptyConfigurationError = Class.new(StandardError)
+    EmptyRescueError = Class.new(StandardError)
+    NotRescuableError = Class.new(StandardError)
+
     def self.configure(schema, &block)
+      raise EmptyConfigurationError unless block
+
       instance = new(&block)
       schema.instrument(:field, instance)
     end
@@ -36,9 +42,11 @@ module GraphQL
       field.redefine { resolve(new_resolve_proc) }
     end
 
-    # TODO: validate args
     def rescue_from(*classes, &block)
+      raise EmptyRescueError unless block
+
       classes.each do |klass|
+        raise NotRescuableError.new(klass.inspect) unless klass.is_a?(Class)
         @handler_by_class[klass] ||= block
       end
     end
