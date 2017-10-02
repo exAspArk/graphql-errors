@@ -12,6 +12,14 @@ This gem provides a simple error handling for [graphql-ruby](https://github.com/
   <img src="images/universe.png" height="41" width="153" alt="Sponsored by Universe" style="max-width:100%;">
 </a>
 
+
+## Highlights
+
+* Error handling for each field.
+* Logic inside the `rescue_from` block, similarly to Rails.
+* Per schema configuration.
+* No dependencies.
+
 ## Usage
 
 Once you defined your GraphQL schema:
@@ -22,7 +30,7 @@ Schema = GraphQL::Schema.define do
 end
 ```
 
-You can add error handlers with `GraphQL::Errors`. For example:
+You can add `rescue_from` error handlers with `GraphQL::Errors`. For example:
 
 ```ruby
 GraphQL::Errors.configure(Schema) do
