@@ -43,7 +43,6 @@ GraphQL::Errors.configure(Schema) do
   end
 
   rescue_from StandardError do |exception|
-    Notify.about(exception)
     GraphQL::ExecutionError.new("Please try to execute the query for this field later")
   end
 end
