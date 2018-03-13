@@ -28,7 +28,7 @@ module GraphQL
           old_resolve_proc.call(object, arguments, context)
         rescue => exception
           if handler = find_handler(exception)
-            handler.call(exception)
+            handler.call(exception, object, arguments, context)
           else
             raise exception
           end

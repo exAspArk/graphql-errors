@@ -4,6 +4,7 @@ class Post
   NotFound = Class.new(StandardError)
   Invalid = Class.new(StandardError)
   Oops = Class.new(StandardError)
+  Boom = Class.new(StandardError)
   WorksOnMyMachine = Class.new(Oops)
 
   def self.where(user_id:)

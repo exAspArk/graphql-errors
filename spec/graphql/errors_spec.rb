@@ -79,6 +79,22 @@ RSpec.describe GraphQL::Errors do
       )
     end
 
+    it 'handles the multiple errors in context by rescuing Post::Boom' do
+      query = "query($user_id: ID!) { posts(user_id: $user_id) { author } }"
+
+      result = Schema.execute(query, variables: {'user_id' => 1})
+
+      expect(result['errors'].size).to eq(3)
+
+      expect(result['errors'].first).to eq (
+          {
+            "message" => "The first thing went wrong",
+            "locations" => ["line" => 1, "column" => 51],
+            "path" => ["posts", 0, "author", "firstError"]
+          }
+      )
+    end
+
     it 'raises the error if there is no handler' do
       query = "query($user_id: ID!) { posts(user_id: $user_id) { id language } }"
 
