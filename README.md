@@ -51,7 +51,6 @@ GraphQL::Errors.configure(Schema) do
     firstError.path = context.path + ["myError"]
     context.add_error(firstError)
   end
-
 end
 ```
 
