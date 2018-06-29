@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/exAspArk/graphql-errors.svg?branch=master)](https://travis-ci.org/exAspArk/graphql-errors)
 [![Coverage Status](https://coveralls.io/repos/github/exAspArk/graphql-errors/badge.svg?branch=master)](https://coveralls.io/github/exAspArk/graphql-errors?branch=master)
-[![Code Climate](https://img.shields.io/codeclimate/maintainability/exAspArk/graphql-errors.svg)](https://codeclimate.com/github/exAspArk/graphql-errors/maintainability)
 [![Downloads](https://img.shields.io/gem/dt/graphql-errors.svg)](https://rubygems.org/gems/graphql-errors)
 [![Latest Version](https://img.shields.io/gem/v/graphql-errors.svg)](https://rubygems.org/gems/graphql-errors)
 
@@ -17,6 +16,7 @@ This gem provides a simple error handling for [graphql-ruby](https://github.com/
 
 * Error handling for each field.
 * Logic inside the `rescue_from` block, similarly to Rails.
+* Catching exceptions by ancestors, e.g. `CustomError` with `rescue_from StandardError`.
 * Per schema configuration.
 * No dependencies.
 

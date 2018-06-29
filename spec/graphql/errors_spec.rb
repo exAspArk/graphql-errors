@@ -27,9 +27,9 @@ RSpec.describe GraphQL::Errors do
 
   context 'GraphQL integration' do
     it 'works without errors' do
-      query = "query($user_id: ID!) { posts(user_id: $user_id) { id title } }"
+      query = "query($userId: ID!) { posts(userId: $userId) { id title } }"
 
-      result = Schema.execute(query, variables: {'user_id' => 1})
+      result = Schema.execute(query, variables: {'userId' => 1})
 
       expect(result).to eq("data" => {"posts" => [{"id" => "1", "title" => "Post Title"}]})
     end
@@ -50,56 +50,54 @@ RSpec.describe GraphQL::Errors do
     end
 
     it 'rescues the second Post::Invalid error in the list' do
-      query = "query($user_id: ID!) { posts(user_id: $user_id) { id category } }"
+      query = "query($userId: ID!) { posts(userId: $userId) { id category } }"
 
-      result = Schema.execute(query, variables: {'user_id' => 1})
+      result = Schema.execute(query, variables: {'userId' => 1})
 
       expect(result).to eq(
         "data" => nil,
         "errors" => [
           "message" => "Post is invalid",
-          "locations" => ["line" => 1, "column" => 54],
+          "locations" => ["line" => 1, "column" => 51],
           "path" => ["posts", 0, "category"]
         ]
       )
     end
 
     it 'handles the inherited Post::WorksOnMyMachine error by rescuing Post::Oops' do
-      query = "query($user_id: ID!) { posts(user_id: $user_id) { id description } }"
+      query = "query($userId: ID!) { posts(userId: $userId) { id description } }"
 
-      result = Schema.execute(query, variables: {'user_id' => 1})
+      result = Schema.execute(query, variables: {'userId' => 1})
 
       expect(result).to eq(
         "data" => nil,
         "errors" => [
           "message" => "Something went wrong. Try again later",
-          "locations" => ["line" => 1, "column" => 54],
+          "locations" => ["line" => 1, "column" => 51],
           "path" => ["posts", 0, "description"]
         ]
       )
     end
 
     it 'handles the multiple errors in context by rescuing Post::Boom' do
-      query = "query($user_id: ID!) { posts(user_id: $user_id) { author } }"
+      query = "query($userId: ID!) { posts(userId: $userId) { author } }"
 
-      result = Schema.execute(query, variables: {'user_id' => 1})
+      result = Schema.execute(query, variables: {'userId' => 1})
 
       expect(result['errors'].size).to eq(3)
 
-      expect(result['errors'].first).to eq (
-          {
-            "message" => "The first thing went wrong",
-            "locations" => ["line" => 1, "column" => 51],
-            "path" => ["posts", 0, "author", "firstError"]
-          }
+      expect(result['errors'].first).to eq(
+        "message" => "The first thing went wrong",
+        "locations" => ["line" => 1, "column" => 48],
+        "path" => ["posts", 0, "author", "firstError"]
       )
     end
 
     it 'raises the error if there is no handler' do
-      query = "query($user_id: ID!) { posts(user_id: $user_id) { id language } }"
+      query = "query($userId: ID!) { posts(userId: $userId) { id language } }"
 
       expect {
-        Schema.execute(query, variables: {'user_id' => 1})
+        Schema.execute(query, variables: {'userId' => 1})
       }.to raise_error(RuntimeError, 'Request failed')
     end
   end
