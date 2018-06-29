@@ -49,6 +49,23 @@ RSpec.describe GraphQL::Errors do
       )
     end
 
+    it 'rescues Post::NotFound error with mutation' do
+      query = "mutation($postId: ID!) { createComment(input: { postId: $postId }) { post { id } } }"
+
+      result = Schema.execute(query, variables: {'postId' => 1})
+
+      expect(result).to eq(
+        "data" => {
+          "createComment" => nil
+        },
+        "errors" => [
+          "message" => "Post is invalid",
+          "locations" => ["line" => 1, "column" => 26],
+          "path" => ["createComment"]
+        ]
+      )
+    end
+
     it 'rescues the second Post::Invalid error in the list' do
       query = "query($userId: ID!) { posts(userId: $userId) { id category } }"
 

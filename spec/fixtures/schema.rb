@@ -25,8 +25,26 @@ when '1_7'
     end
   end
 
+  CreateCommentMutation = GraphQL::Relay::Mutation.define do
+    name "CreateComment"
+
+    input_field :postId, !types.ID
+
+    return_field :post, PostType
+
+    resolve ->(_obj, inputs, _ctx) do
+      raise Post::NotFound.new("Post with id '#{inputs[:postId]}' not found")
+    end
+  end
+
+  MutationType = GraphQL::ObjectType.define do
+    name "Mutation"
+    field :createComment, field: CreateCommentMutation.field
+  end
+
   Schema = GraphQL::Schema.define do
     query QueryType
+    mutation MutationType
   end
 
   GraphQL::Errors.configure(Schema) do
@@ -92,8 +110,23 @@ when '1_8'
     end
   end
 
+  class CreateCommentMutation < GraphQL::Schema::RelayClassicMutation
+    argument :post_id, ID, required: true
+
+    field :post, PostType, null: true
+
+    def resolve(post_id:)
+      raise Post::NotFound.new("Post with id '#{post_id}' not found")
+    end
+  end
+
+  class MutationType < GraphQL::Schema::Object
+    field :create_comment, mutation: CreateCommentMutation
+  end
+
   class Schema < GraphQL::Schema
     query QueryType
+    mutation MutationType
   end
 
   GraphQL::Errors.configure(Schema) do
