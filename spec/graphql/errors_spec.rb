@@ -34,6 +34,21 @@ RSpec.describe GraphQL::Errors do
       expect(result).to eq("data" => {"posts" => [{"id" => "1", "title" => "Post Title"}]})
     end
 
+    it 'rescues errors from BatchLoader' do
+      query = "query($id: ID!) { lazyPost(id: $id) { id title } }"
+
+      result = Schema.execute(query, variables: {'id' => 1})
+
+      expect(result).to eq(
+        "data" => nil,
+        "errors" => [
+          "message" => "Something went wrong. Try again later",
+          "locations" => ["line" => 1, "column" => 19],
+          "path" => ["post"]
+        ]
+      )
+    end
+
     it 'rescues the first Post::NotFound error in the list' do
       query = "query($id: ID!) { post(id: $id) { id title } }"
 
