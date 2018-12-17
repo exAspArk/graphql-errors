@@ -11,6 +11,7 @@ if ENV['COVERALLS_REPO_TOKEN']
   Coveralls.wear!
 end
 
+require 'batch-loader'
 require "graphql/errors"
 
 require 'fixtures/post'

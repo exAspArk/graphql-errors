@@ -23,6 +23,13 @@ when '1_7'
       argument :id, !types.ID
       resolve ->(_obj, _args, _ctx) { raise Post::NotFound.new('Post not found') }
     end
+
+    field :lazyPost, !PostType do
+      argument :id, !types.ID
+      resolve ->(_obj, args, _ctx) do
+        BatchLoader.for(args[:id]).batch { raise Post::Oops.new('inside BatchLoader') }
+      end
+    end
   end
 
   CreateCommentMutation = GraphQL::Relay::Mutation.define do
@@ -45,26 +52,7 @@ when '1_7'
   Schema = GraphQL::Schema.define do
     query QueryType
     mutation MutationType
-  end
-
-  GraphQL::Errors.configure(Schema) do
-    rescue_from Post::NotFound, Post::Invalid do |exception|
-      GraphQL::ExecutionError.new('Post is invalid')
-    end
-
-    rescue_from Post::Oops do |exception|
-      GraphQL::ExecutionError.new('Something went wrong. Try again later')
-    end
-
-    rescue_from Post::Boom do |exception, object, arguments, context|
-      firstError = GraphQL::ExecutionError.new("The first thing went wrong")
-      firstError.path = context.path + ["firstError"]
-      context.add_error(firstError)
-
-      secondError = GraphQL::ExecutionError.new("The second thing went wrong")
-      secondError.path = context.path + ["secondError"]
-      context.add_error(secondError)
-    end
+    use BatchLoader::GraphQL
   end
 when '1_8'
   class PostType < GraphQL::Schema::Object
@@ -101,12 +89,20 @@ when '1_8'
       argument :id, ID, required: true
     end
 
+    field :lazy_post, PostType, null: false do
+      argument :id, ID, required: true
+    end
+
     def posts(user_id:)
       Post.where(user_id: user_id)
     end
 
     def post(id:)
       raise Post::NotFound.new('Post not found')
+    end
+
+    def lazy_post(id:)
+      BatchLoader.for(id).batch { raise Post::Oops.new('inside BatchLoader') }
     end
   end
 
@@ -127,25 +123,26 @@ when '1_8'
   class Schema < GraphQL::Schema
     query QueryType
     mutation MutationType
+    use BatchLoader::GraphQL
+  end
+end
+
+GraphQL::Errors.configure(Schema) do
+  rescue_from Post::NotFound, Post::Invalid do |exception|
+    GraphQL::ExecutionError.new('Post is invalid')
   end
 
-  GraphQL::Errors.configure(Schema) do
-    rescue_from Post::NotFound, Post::Invalid do |exception|
-      GraphQL::ExecutionError.new('Post is invalid')
-    end
+  rescue_from Post::Oops do |exception|
+    GraphQL::ExecutionError.new('Something went wrong. Try again later')
+  end
 
-    rescue_from Post::Oops do |exception|
-      GraphQL::ExecutionError.new('Something went wrong. Try again later')
-    end
+  rescue_from Post::Boom do |exception, object, arguments, context|
+    firstError = GraphQL::ExecutionError.new("The first thing went wrong")
+    firstError.path = context.path + ["firstError"]
+    context.add_error(firstError)
 
-    rescue_from Post::Boom do |exception, object, arguments, context|
-      firstError = GraphQL::ExecutionError.new("The first thing went wrong")
-      firstError.path = context.path + ["firstError"]
-      context.add_error(firstError)
-
-      secondError = GraphQL::ExecutionError.new("The second thing went wrong")
-      secondError.path = context.path + ["secondError"]
-      context.add_error(secondError)
-    end
+    secondError = GraphQL::ExecutionError.new("The second thing went wrong")
+    secondError.path = context.path + ["secondError"]
+    context.add_error(secondError)
   end
 end
