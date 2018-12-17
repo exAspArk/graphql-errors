@@ -52,6 +52,7 @@ when '1_7'
   Schema = GraphQL::Schema.define do
     query QueryType
     mutation MutationType
+    use BatchLoader::GraphQL
   end
 when '1_8'
   class PostType < GraphQL::Schema::Object
