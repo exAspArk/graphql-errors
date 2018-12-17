@@ -44,7 +44,7 @@ RSpec.describe GraphQL::Errors do
         "errors" => [
           "message" => "Something went wrong. Try again later",
           "locations" => ["line" => 1, "column" => 19],
-          "path" => ["post"]
+          "path" => ["lazyPost"]
         ]
       )
     end
