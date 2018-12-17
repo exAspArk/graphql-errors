@@ -51,9 +51,9 @@ module GraphQL
 
     private
 
-    def wrap_proc(object, arguments, context, old_resolve_proc)
+    def wrap_proc(object, arguments, context, old_proc)
       begin
-        old_resolve_proc.call(object, arguments, context)
+        old_proc.call(object, arguments, context)
       rescue => exception
         if handler = find_handler(exception)
           handler.call(exception, object, arguments, context)
