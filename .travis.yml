@@ -1,10 +1,9 @@
-sudo: false
 language: ruby
 rvm:
   - 2.3.4
 env:
   - COVERALLS_RUN_LOCALLY=true
-before_install: gem install bundler -v 1.15.3
+before_install: gem install bundler -v '< 2'
 matrix:
   include:
     - gemfile: graphql-1.7.gemfile
