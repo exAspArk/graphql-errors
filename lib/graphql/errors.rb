@@ -18,25 +18,33 @@ module GraphQL
 
     def initialize(&block)
       @handler_by_class = {}
+      if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.9.0.pre3')
+        @field_extension = generate_field_extension
+      end
       self.instance_eval(&block)
     end
 
     def instrument(_type, field)
       old_resolve_proc = field.resolve_proc
 
-      new_resolve_proc = lambda do |obj, args, ctx|
-        wrap_proc(obj, args, ctx, old_resolve_proc)
-      end
+      if @field_extension && (type_class = field.metadata[:type_class])
+        type_class.extension(@field_extension)
+        field
+      else
+        new_resolve_proc = lambda do |obj, args, ctx|
+          wrap_proc(obj, args, ctx, old_resolve_proc)
+        end
 
-      old_lazy_resolve_proc = field.lazy_resolve_proc
+        old_lazy_resolve_proc = field.lazy_resolve_proc
 
-      new_lazy_resolve_proc = lambda do |obj, args, ctx|
-        wrap_proc(obj, args, ctx, old_lazy_resolve_proc)
-      end
+        new_lazy_resolve_proc = lambda do |obj, args, ctx|
+          wrap_proc(obj, args, ctx, old_lazy_resolve_proc)
+        end
 
-      field.redefine do
-        resolve(new_resolve_proc)
-        lazy_resolve(new_lazy_resolve_proc)
+        field.redefine do
+          resolve(new_resolve_proc)
+          lazy_resolve(new_lazy_resolve_proc)
+        end
       end
     end
 
@@ -69,6 +77,26 @@ module GraphQL
       end
 
       nil
+    end
+
+    def generate_field_extension
+      field_extension = Class.new(GraphQL::Schema::FieldExtension) do
+
+        def resolve(object:, arguments:, **_rest)
+          begin
+            yield(object, arguments)
+          rescue => exception
+            if (handler = self.class::ERRORS_INSTANCE.send(:find_handler, exception))
+              handler.call(exception, object, arguments, nil)
+            else
+              raise exception
+            end
+          end
+        end
+
+      end
+      field_extension.const_set(:ERRORS_INSTANCE, self)
+      field_extension
     end
   end
 end
