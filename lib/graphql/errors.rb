@@ -82,12 +82,12 @@ module GraphQL
     def generate_field_extension
       field_extension = Class.new(GraphQL::Schema::FieldExtension) do
 
-        def resolve(object:, arguments:, **_rest)
+        def resolve(object:, arguments:, context:, **_rest)
           begin
             yield(object, arguments)
           rescue => exception
             if (handler = self.class::ERRORS_INSTANCE.send(:find_handler, exception))
-              handler.call(exception, object, arguments, nil)
+              handler.call(exception, object, arguments, context)
             else
               raise exception
             end
