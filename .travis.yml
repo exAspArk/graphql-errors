@@ -10,3 +10,11 @@ matrix:
       env: GRAPHQL_RUBY_VERSION=1_7
     - gemfile: graphql-1.8.gemfile
       env: GRAPHQL_RUBY_VERSION=1_8
+    - gemfile: graphql-1.9.gemfile
+      env:
+        - GRAPHQL_RUBY_VERSION=1_9
+        - TESTING_INTERPRETER=true
+    - gemfile: graphql-1.9.gemfile
+      env:
+        - GRAPHQL_RUBY_VERSION=1_9
+        - TESTING_INTERPRETER=false

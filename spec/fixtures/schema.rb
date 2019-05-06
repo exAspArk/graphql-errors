@@ -54,7 +54,7 @@ when '1_7'
     mutation MutationType
     use BatchLoader::GraphQL
   end
-when '1_8'
+when '1_8', '1_9'
   class PostType < GraphQL::Schema::Object
     field :id, ID, null: false
     field :title, String, null: false
@@ -123,6 +123,13 @@ when '1_8'
   class Schema < GraphQL::Schema
     query QueryType
     mutation MutationType
+
+    if ENV["TESTING_INTERPRETER"] == "true"
+      use GraphQL::Execution::Interpreter
+      # This probably has no effect, but just to get the full test:
+      use GraphQL::Analysis::AST
+    end
+
     use BatchLoader::GraphQL
   end
 end
