@@ -44,8 +44,11 @@ module GraphQL
       raise EmptyRescueError unless block
 
       classes.each do |klass|
-        raise NotRescuableError.new(klass.inspect) unless klass.is_a?(Class)
-        @handler_by_class[klass] ||= block
+        if klass.is_a?(Module) && klass.respond_to?(:===)
+          @handler_by_class[klass] ||= block
+        else
+          raise NotRescuableError.new(klass.inspect)
+        end
       end
     end
 
@@ -65,7 +68,7 @@ module GraphQL
 
     def find_handler(exception)
       @handler_by_class.each do |klass, handler|
-        return handler if exception.is_a?(klass)
+        return handler if klass === exception
       end
 
       nil

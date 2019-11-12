@@ -41,6 +41,11 @@ GraphQL::Errors.configure(Schema) do
     GraphQL::ExecutionError.new(exception.record.errors.full_messages.join("\n"))
   end
 
+  # uses Module to handle several similar errors with single rescue_from
+  rescue_from Handle::NetworkErrors do |_|
+    GraphQL::ExecutionError.new("Don't mind, just retry the mutation")
+  end
+
   rescue_from StandardError do |exception|
     GraphQL::ExecutionError.new("Please try to execute the query for this field later")
   end
