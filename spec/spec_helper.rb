@@ -15,6 +15,7 @@ require 'batch-loader'
 require "graphql/errors"
 
 require 'fixtures/post'
+require 'fixtures/my_network_errors'
 require 'fixtures/schema'
 
 RSpec.configure do |config|

@@ -12,27 +12,15 @@ RSpec.describe GraphQL::Errors do
   end
 
   describe '#rescue_from' do
-    before do
-      module NetworkErrors
-        extend self
-
-        ERRORS = [Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::EFAULT,].freeze
-
-        def ===(error)
-          ERRORS.any? { |error_class| error_class === error }
-        end
-      end
-    end
-
     it 'doesn\'t raise an exception if the object which was passed is a module' do
       expect {
-        GraphQL::Errors.configure(Schema) { rescue_from(NetworkErrors) { |e| puts e.inspect } }
+        GraphQL::Errors.configure(Schema) { rescue_from(MyNetworkErrors) { |_e| } }
       }.not_to raise_error
     end
 
     it 'raises an exception if the object which was passed is not a module' do
       expect {
-        GraphQL::Errors.configure(Schema) { rescue_from(1) { |e| puts e.inspect } }
+        GraphQL::Errors.configure(Schema) { rescue_from(1) { |_e| } }
       }.to raise_error(GraphQL::Errors::NotRescuableError)
     end
 

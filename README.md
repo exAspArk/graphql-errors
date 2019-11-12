@@ -42,7 +42,7 @@ GraphQL::Errors.configure(Schema) do
   end
 
   # uses Module to handle several similar errors with single rescue_from
-  rescue_from Handle::NetworkErrors do |_|
+  rescue_from MyNetworkErrors do |_|
     GraphQL::ExecutionError.new("Don't mind, just retry the mutation")
   end
 
