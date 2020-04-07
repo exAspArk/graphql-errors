@@ -1,15 +1,15 @@
 # graphql-errors
 
+:warning: This gem is **deprecated** in favor of the new `GraphQL::Execution::Errors` in the `graphql` gem. See more details [rmosolgo/graphql-ruby#2458](https://github.com/rmosolgo/graphql-ruby/pull/2458).
+
+---
+
 [![Build Status](https://travis-ci.org/exAspArk/graphql-errors.svg?branch=master)](https://travis-ci.org/exAspArk/graphql-errors)
 [![Coverage Status](https://coveralls.io/repos/github/exAspArk/graphql-errors/badge.svg?branch=master)](https://coveralls.io/github/exAspArk/graphql-errors?branch=master)
 [![Downloads](https://img.shields.io/gem/dt/graphql-errors.svg)](https://rubygems.org/gems/graphql-errors)
 [![Latest Version](https://img.shields.io/gem/v/graphql-errors.svg)](https://rubygems.org/gems/graphql-errors)
 
 This gem provides a simple error handling for [graphql-ruby](https://github.com/rmosolgo/graphql-ruby).
-
-<a href="https://www.hyrestaff.com/" target="_blank" rel="noopener noreferrer">
-  <img src="images/hyre.png" height="39" width="137" alt="Sponsored by Hyre" style="max-width:100%;">
-</a>
 
 ## Highlights
 
